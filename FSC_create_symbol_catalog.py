@@ -59,6 +59,7 @@ def parse_arguments():
     return args
 
 LEGACY_ENCODING = 'ascii'
+
 def check_filename_compatibility(filename):
     """
     Checks if a filename can be safely encoded to the legacy system's encoding.
@@ -250,7 +251,7 @@ if __name__ == "__main__":
 
     # For now, create noncompressed FSC file
     # Write out all the parts to a single file
-    output_fsc_path = os.path.join(".", "output_symbols.fsc")
+    output_fsc_path = os.path.join(".", args.output_file)
     with open(output_fsc_path, "wb") as fsc_file:
         fsc_file.write(bytes(fsc_header))
         fsc_file.write(bytes(infoblocks))
