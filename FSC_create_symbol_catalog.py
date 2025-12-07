@@ -80,12 +80,12 @@ def process_symbol_images(directory_path):
     # This regex captures: 
     # (.*?) -> The symbol name (non-greedy match for anything)
     # \s+vari_0[1-2]{1}\.png$ -> Matches the ' vari_XX.png' suffix
-    variant_pattern = re.compile(r"(.*?)\s+vari_0[1-2]{1}\.png$", re.IGNORECASE)
+    varicolor_pattern = re.compile(r"(.*?)\s+vari_0[1-2]{1}\.png$", re.IGNORECASE)
     subgroup_pattern = re.compile(r"^(.*?)(\d+)$", re.IGNORECASE)
 
     # Dictionary to hold lists of files, grouped by their base name
     groups = defaultdict(list)
-    subgroup_variant = defaultdict(list)  # Hold names without any number extension
+    subgroup_varicolor = defaultdict(list)  # Hold names without any number extension
     subgroup_normal = defaultdict(list)  # Hold names without any number extension
     skip_count = 0
 
@@ -108,11 +108,11 @@ def process_symbol_images(directory_path):
             
         full_path = os.path.join(directory_path, filename)
         
-        # Check if the file matches the variant pattern
-        match = variant_pattern.match(filename)
+        # Check if the file matches the varicolor pattern
+        match = varicolor_pattern.match(filename)
         
         if match:
-            # If it's a variant, the base name is the captured group (symbol name)
+            # If it's a varicolor, the base name is the captured group (symbol name)
             base_symbol_name = match.group(1)
         else:
             # If it's a single file (e.g., "Walled Garden 001.png"), 
@@ -126,28 +126,58 @@ def process_symbol_images(directory_path):
         if subgroup_match:
             name_without_number = subgroup_match.group(1)
             if (match):
-                subgroup_variant[name_without_number].append(full_path)
+                subgroup_varicolor[name_without_number].append(full_path)
             else:
                 subgroup_normal[name_without_number].append(full_path)
 
     # 2. Second pass: Process the groups based on group size
     for symbol_name, files in groups.items():
-        if len(files) == 2 and all("vari_" in f for f in files):
+        # If the len(files) is 3, and 2 are "vari" then there are two varicolor PNGs and one normal
+        if len(files) == 3 and sum(1 for f in files if "vari_" in f) == 2:
             # Sort files by name to ensure consistent handling of _01 and _02
             files.sort()
+            # Identify the normal file
+            normal_file = next(f for f in files if "vari_" not in f)
+            varicolor_files = [f for f in files if "vari_" in f]
 
-            # Check if the file is part of the subgroup_variant.
+            # Check if the varicolor symbol name is part of the subgroup_varicolor.
             # If so, and if there are more than 2 files in that subgroup, set group to True
             # We need more than 2 because the current two are just a single pair of variants.
             group = False
             subname_match = subgroup_pattern.match(symbol_name)
             if subname_match:
-                if subname_match.group(1) in subgroup_variant:
-                    if len(subgroup_variant[subname_match.group(1)]) > 2:
+                if subname_match.group(1) in subgroup_varicolor:
+                    if len(subgroup_varicolor[subname_match.group(1)]) > 2:
+                        group = True
+            all_symbols.append(bytes(handle_varicolor_pair(symbol_name, varicolor_files[0], varicolor_files[1], group)))
+
+            # Check if the normal symbol file is part of the subgroup_normal.
+            group = False
+            subname_match = subgroup_pattern.match(symbol_name)
+            if subname_match:
+                if subname_match.group(1) in subgroup_normal:
+                    if len(subgroup_normal[subname_match.group(1)]) > 1:
+                        group = True
+            all_symbols.append(bytes(handle_single_symbol(symbol_name, normal_file, group)))
+
+        # Handle just 2 varicolor PNG files
+        elif len(files) == 2 and all("vari_" in f for f in files):
+            # Sort files by name to ensure consistent handling of _01 and _02
+            files.sort()
+
+            # Check if the file is part of the subgroup_varicolor.
+            # If so, and if there are more than 2 files in that subgroup, set group to True
+            # We need more than 2 because the current two are just a single pair of variants.
+            group = False
+            subname_match = subgroup_pattern.match(symbol_name)
+            if subname_match:
+                if subname_match.group(1) in subgroup_varicolor:
+                    if len(subgroup_varicolor[subname_match.group(1)]) > 2:
                         group = True
 
-            all_symbols.append(bytes(handle_variant_pair(symbol_name, files[0], files[1], group)))
+            all_symbols.append(bytes(handle_varicolor_pair(symbol_name, files[0], files[1], group)))
         
+        # Handle just normal PNG file
         elif len(files) == 1 and "vari_" not in files[0]:
             # Check if the file is part of the subgroup_normal.
             group = False
@@ -167,7 +197,7 @@ def process_symbol_images(directory_path):
 
     return b"".join(all_symbols)
 
-def handle_variant_pair(symbol_name, file_01_path, file_02_path, isGroup):
+def handle_varicolor_pair(symbol_name, file_01_path, file_02_path, isGroup):
 #    print(f"  File 1: {os.path.basename(file_01_path)}")
 #    print(f"  File 2: {os.path.basename(file_02_path)}")
 #    print(f"  Is part of subgroup: {isGroup}")
