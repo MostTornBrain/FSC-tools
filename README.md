@@ -1,8 +1,7 @@
 # FSC-tools
 Python scripts to support creating Campaign Cartographer 3+ Symbol Catalogs
-
-Requires one external Python module dependency: Pillow, for PNG image dimension fetching
-`pip install Pillow`
+This has no external Python module depencies.  It should work with a plain 
+Python 3 installation.
 
 ## Usage
 `FSC_create_symbol_catalog.py [-h] -s SOURCE_DIRS [SOURCE_DIRS ...] -o OUTPUT_FILE`
