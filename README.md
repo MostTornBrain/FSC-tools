@@ -1,33 +1,39 @@
 # FSC-tools
 Python scripts to support creating Campaign Cartographer 3+ Symbol Catalogs
-This has no external Python module depencies.  It should work with a plain 
-Python 3 installation.
+This has no external Python module depencies.  It should work with a standard, 
+plain Python 3 installation on Windows.
 
 ## Usage
+### Syntax
 `FSC_create_symbol_catalog.py [-h] -s SOURCE_DIRS [SOURCE_DIRS ...] -o OUTPUT_FILE`
 
-The SOURCE_DIRS argmuent supports `*` wildcarding in the pathname provided.
+### Arguments
+*   **`-s SOURCE_DIRS` / `--source-dirs`**: One or more paths to directories containing your PNG symbol files. This argument supports `*` wildcard expansion (globbing) internally within the script for easy use on Windows. Ensure you quote arguments that contain wildcards (e.g., `-s "C:\path\*Monsters*"`).
+*   **`-o OUTPUT_FILE` / `--output-file`**: The filename and path for the output `.FSC` catalog file that the script will create.
 
-The script will process all the PNGs files in the supplied SOURCE_DIRS and will create a CC3+ symbol
-catalog file that references them.   Each symbol will be named after the PNG file, minus the .PNG suffixx.
-It will do automatic detection of "groups" of symbols based on filenames pattern matching.  The PNGs are 
-not modified and are left in the source directories.  The symbol catalog will contain absolute pathnames
-each symbol.
+## Description
 
-Any files that share a common prefix followed by unique numbers will be considered a group and will be marked as such in
-the catalog and will also be marked for random selection within the group.   If there are pairs of files that 
-follow the varicolor naming convention of "vari 01"/"vari 02" as part of the PNG file name, those will automatically 
-be created as varicolor symbols within the catalog.  Varicolor symbols can also be part of a group like normal symbols.
+The script processes all PNG files in the supplied `SOURCE_DIRS` and creates a CC3+ 
+symbol catalog file that references them using absolute pathnames. The original PNG 
+files are not modified.
 
-NOTE: The CC3+ Symbol Catalog uses ASCII naming for file paths.  If any of your PNG's include non-ASCII characters, the
-script will skip those files and will print a message about the files that have incompatible names. 
+*   Each symbol is named after its PNG filename (minus the `.PNG` extension).
+*   **Automatic Grouping:** Files sharing a common prefix followed by unique numbers will be considered a group and marked for random selection within the catalog.
+*   **Varicolor Support:** Pairs of files following the `vari_01`/`vari_02` naming convention automatically become varicolor symbols in the catalog.
+
+**⚠️ Important Note on Filenames:**
+
+The CC3+ Symbol Catalog requires filenames and file paths to use standard **ASCII** characters. If any of your PNG files include non-ASCII characters (e.g., specific accented letters or unusual symbols), the script will skip those files and print an error message. Please rename affected files to use only standard English letters, numbers, and symbols.
+
 
 ## Usage example:
-In a Windows command shell (Command Prompt or Powershell):
+To run the script, open your Windows command shell (Command Prompt or Powershell).
+
+**Command:**
 ```
 python .\FSC_create_symbol_catalog.py -s "C:\Users\username\Downloads\Here There Be Monsters PNG Pack 1.1\*Monsters*" -o SeaMonsters.FSC`
 ```
-Output received:
+**Output Received:**
 ```
 python .\FSC_create_symbol_catalog.py -s "C:\Users\username\Downloads\Here There Be Monsters PNG Pack 1.1\*Monsters*" -o SeaMonsters.FSC
 --- Expanding Source Directory Wildcards ---
