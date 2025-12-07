@@ -93,6 +93,8 @@ def process_symbol_images(directory_path):
     for filename in os.listdir(directory_path):
         if not filename.lower().endswith('.png'):
             continue
+        if filename.lower().startswith('.'):
+            continue
 
         # --- FILENAME COMPATIBILITY CHECK ---
         if not check_filename_compatibility(filename):

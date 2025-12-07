@@ -46,8 +46,9 @@
 
 import ctypes
 from enum import IntEnum
-from PIL import Image
 import os
+import struct
+import sys
 
 # --- Constants (from .H headers) --------------------------------------------
 ET_XP = 4
@@ -120,13 +121,27 @@ TF_MIRROR_Y          = 0x00000040  # randomly mirror in Y
 #--- Helpers ----------------------------------------------------------
 
 def png_dimensions(file_path):
-    """Opens a PNG file and returns its width and height."""
+    """
+    Reads the dimensions from a PNG file header using only standard Python libraries.
+    """
     try:
-        with Image.open(file_path) as img:
-            width, height = img.size
+        with open(file_path, 'rb') as f:
+            data = f.read(24) # Read just the first 24 bytes
+
+        # Check the PNG magic number and the IHDR chunk signature
+        if data.startswith(b'\x89PNG\r\n\x1a\n') and data[12:16] == b'IHDR':
+            # Unpack the 4-byte width and 4-byte height from bytes 16 to 24
+            # '>LL' means Big-Endian (>) Unsigned Long Long (LL, 4 bytes each)
+            width, height = struct.unpack(b'>LL', data[16:24])
             return width, height
-    except IOError as e:
-        print(f"Error opening image file {file_path}: {e}")
+        else:
+            raise ValueError("File is not a valid PNG file or has a corrupted header.")
+
+    except FileNotFoundError:
+        print(f"Error: File not found at {file_path}", file=sys.stderr)
+        return None, None
+    except ValueError as e:
+        print(f"Error reading dimensions for {os.path.basename(file_path)}: {e}", file=sys.stderr)
         return None, None
 
 
