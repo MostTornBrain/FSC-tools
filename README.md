@@ -19,6 +19,9 @@ the catalog and will also be marked for random selection within the group.   If 
 follow the varicolor naming convention of "vari 01"/"vari 02" as part of the PNG file name, those will automatically 
 be created as varicolor symbols within the catalog.  Varicolor symbols can also be part of a group like normal symbols.
 
+NOTE: The CC3+ Symbol Catalog uses ASCII naming for file paths.  If any of your PNG's include non-ASCII characters, the
+script will skip those files and will print a message about the files that have incompatible names. 
+
 ## Usage example:
 In a Windows command shell (Command Prompt or Powershell):
 ```
