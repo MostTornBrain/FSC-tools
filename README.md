@@ -7,9 +7,13 @@ Requires one external Python module dependency: Pillow, for PNG image dimension 
 ## Usage
 `FSC_create_symbol_catalog.py [-h] -s SOURCE_DIRS [SOURCE_DIRS ...] -o OUTPUT_FILE`
 
+The SOURCE_DIRS argmuent supports `*` wildcarding in the pathname provided.
+
 The script will process all the PNGs files in the supplied SOURCE_DIRS and will create a CC3+ symbol
 catalog file that references them.   Each symbol will be named after the PNG file, minus the .PNG suffixx.
-It will do automatic detection of "groups" of symbols based on filenames pattern matching.  
+It will do automatic detection of "groups" of symbols based on filenames pattern matching.  The PNGs are 
+not modified and are left in the source directories.  The symbol catalog will contain absolute pathnames
+each symbol.
 
 Any files that share a common prefix followed by unique numbers will be considered a group and will be marked as such in
 the catalog and will also be marked for random selection within the group.   If there are pairs of files that 
