@@ -4,7 +4,19 @@ Python scripts to support creating Campaign Cartographer 3+ Symbol Catalogs
 Requires one external Python module dependency: Pillow, for PNG image dimension fetching
 `pip install Pillow`
 
-Usage example:
+## Usage
+`FSC_create_symbol_catalog.py [-h] -s SOURCE_DIRS [SOURCE_DIRS ...] -o OUTPUT_FILE`
+
+The script will process all the PNGs files in the supplied SOURCE_DIRS and will create a CC3+ symbol
+catalog file that references them.   Each symbol will be named after the PNG file, minus the .PNG suffixx.
+It will do automatic detection of "groups" of symbols based on filenames pattern matching.  
+
+Any files that share a common prefix followed by unique numbers will be considered a group and will be marked as such in
+the catalog and will also be marked for random selection within the group.   If there are pairs of files that 
+follow the varicolor naming convention of "vari 01"/"vari 02" as part of the PNG file name, those will automatically 
+be created as varicolor symbols within the catalog.  Varicolor symbols can also be part of a group like normal symbols.
+
+## Usage example:
 ```
 PS C:\> python .\FSC_create_symbol_catalog.py -s "C:\Users\nospa\Downloads\Here There Be Monsters PNG Pack 1.1\*Monsters*" -o SeaMonsters.FSC
 --- Expanding Source Directory Wildcards ---
