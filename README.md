@@ -20,6 +20,7 @@ follow the varicolor naming convention of "vari 01"/"vari 02" as part of the PNG
 be created as varicolor symbols within the catalog.  Varicolor symbols can also be part of a group like normal symbols.
 
 ## Usage example:
+In a Windows command shell (Command Prompt or Powershell):
 ```
 python .\FSC_create_symbol_catalog.py -s "C:\Users\username\Downloads\Here There Be Monsters PNG Pack 1.1\*Monsters*" -o SeaMonsters.FSC`
 ```
