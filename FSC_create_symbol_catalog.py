@@ -119,6 +119,12 @@ def process_symbol_images(directory_path):
             # its base name is its filename without the .png extension
             base_symbol_name = os.path.splitext(filename)[0]
 
+        # If symbol name exceeds 32 characters, skip it with a warning
+        if len(base_symbol_name) > 32:
+            print(f"--- Warning: Symbol name '{base_symbol_name}' exceeds 32 characters. Skipping file '{filename}'. ---")
+            skip_count += 1
+            continue
+
         groups[base_symbol_name].append(full_path)
 
         # Further process to identify subgroups without number extensions
